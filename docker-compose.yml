@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_dc
+    ports:
+      - "54320:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: lovely_days
+      POSTGRES_PASSWORD: admin
+    networks:
+      - backend
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_dc
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: wangxiaoshicc@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5051:80"
+    links:
+      - "postgres:pgsql-server" # 这里建立链接，postgres这个服务 会被用作pgsql-server，在pgAdmin中的添加服务器地址输入
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    networks:
+      - backend
+      - frontend
+
+  lovely-days-backend:
+    container_name: lovely-days-backend_dc
+    #restart: always
+    depends_on: 
+      - postgres
+    build:
+      context: lovely-days-backend
+      dockerfile: Dockerfile
+    working_dir: /app
+    environment:
+      DATASOURCE_HOST: jdbc:postgresql://pgsql-server/lovely_days
+      DATASOURCE_USER: postgres
+      DATASOURCE_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+      - frontend
+    links:
+      - "postgres:pgsql-server"
+
+volumes:
+  pgdata:
+  pgadmindata:
+
+networks:
+  backend:
+  frontend:
