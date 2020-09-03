@@ -51,9 +51,22 @@ services:
     links:
       - "postgres:pgsql-server"
 
+  lovely-days-frontend:
+    container_name: lovely-days-frontend_dc
+    build:
+      context: lovely-days-frontend
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - 'frontend-volume:/app'
+      - '/app/node_modules'
+    ports:
+      - '4200:4200'
+
 volumes:
   pgdata:
   pgadmindata:
+  frontend-volume:
 
 networks:
   backend:
