@@ -32,7 +32,7 @@ services:
 
   lovely-days-backend:
     container_name: lovely-days-backend_dc
-    #restart: always
+    restart: always
     depends_on: 
       - postgres
     build:
@@ -53,15 +53,16 @@ services:
 
   lovely-days-frontend:
     container_name: lovely-days-frontend_dc
+    restart: always
     build:
       context: lovely-days-frontend
       dockerfile: Dockerfile
     working_dir: /app
     volumes:
-      - 'frontend-volume:/app'
-      - '/app/node_modules'
+      - frontend-volume:/app
+      - /app/node_modules
     ports:
-      - '4200:4200'
+      - "4200:4200"
     networks:
       - frontend
 
